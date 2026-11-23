@@ -71,13 +71,18 @@ export default function AdminDashboardPage() {
     setLoading(false)
   }
 
+  const sanitizeSlug = (val) => {
+    const withoutOrigin = val.includes('/absen/') ? val.split('/absen/').pop() : val
+    return withoutOrigin
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  }
+
   const handleTitleChange = (val) => {
     setTitle(val)
-    const autoSlug = val
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-    setSlug(autoSlug)
+    setSlug(sanitizeSlug(val))
   }
 
   const handleUseCurrentGPS = () => {
@@ -94,11 +99,16 @@ export default function AdminDashboardPage() {
 
   const handleCreateEvent = async (e) => {
     e.preventDefault()
+    const cleanSlug = sanitizeSlug(slug)
+    if (!cleanSlug) {
+      alert('Kode URL (Slug) tidak valid. Gunakan huruf kecil, angka, atau tanda hubung (-).')
+      return
+    }
     setSaving(true)
 
     const payload = {
       title,
-      slug,
+      slug: cleanSlug,
       organizer: organizer || null,
       event_date: eventDate,
       start_time: new Date(startTime).toISOString(),
@@ -344,7 +354,15 @@ export default function AdminDashboardPage() {
                   type="text"
                   required
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={(e) =>
+                    setSlug(
+                      e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9-]/g, '-')
+                        .replace(/-+/g, '-')
+                    )
+                  }
+                  placeholder="rapat-tracing-tb"
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-slate-50"
                 />
               </div>

@@ -14,6 +14,7 @@ export default function App() {
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/event/:id" element={<EventDetailPage />} />
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
   )
